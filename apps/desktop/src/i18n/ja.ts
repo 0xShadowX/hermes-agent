@@ -3339,13 +3339,16 @@ export const ja = defineLocale({
       editModels: 'モデルを編集…',
       followDefault: '設定のデフォルトを使用',
       refreshModels: 'モデルを更新',
-      fast: '高速'
+      fast: '高速',
+      pinnedSection: 'ピン留め'
     },
     modelOptions: {
       noOptions: 'このモデルにはオプションがありません',
       options: 'オプション',
       thinking: '思考',
       fast: '高速',
+      pinModel: '先頭にピン留め',
+      unpinModel: 'ピン留めを解除',
       effort: '努力度',
       minimal: '最小',
       low: '低',
