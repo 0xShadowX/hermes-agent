@@ -3435,7 +3435,7 @@ display:
     summary_callback: "💾 自己改善レビュー: {summary}"
     aux_failure_label: "バックグラウンドレビュー"
   notice:
-    uncompressed_context_overflow: "⚠️ セッションのコンテキスト（約 {tokens} トークン）がモデルのコンテキストウィンドウ（約 {context_length} トークン）を超えており、圧縮が利用できません。リクエストは失敗する可能性があります。"
+    uncompressed_context_overflow: "⚠️ セッションのコンテキスト（約{tokens}トークン）が、圧縮が無効（compression.enabled: false）の状態でモデルのコンテキストウィンドウ（約{context_length}トークン）を超えています。/compact で履歴を圧縮するか、config.yaml で圧縮を有効にしてください。"
 explainer:
   no_reply_prefix: "⚠️ 応答なし: "
   empty_response: "{model} は再試行後も応答を生成しませんでした。`continue` を送信して再試行するか、/model でモデルを切り替えてください。"

@@ -3435,7 +3435,7 @@ display:
     summary_callback: "💾 Kendini geliştirme incelemesi: {summary}"
     aux_failure_label: "arka plan incelemesi"
   notice:
-    uncompressed_context_overflow: "⚠️ Oturum bağlamı (~{tokens} token) modelin bağlam penceresini (~{context_length} token) aşıyor ve sıkıştırma kullanılamıyor; istek başarısız olabilir."
+    uncompressed_context_overflow: "⚠️ Oturum bağlamı (~{tokens} token) sıkıştırma devre dışıyken (compression.enabled: false) modelin bağlam penceresini (~{context_length} token) aşıyor. Geçmişi sıkıştırmak için /compact kullanın veya config.yaml içinde sıkıştırmayı etkinleştirin."
 explainer:
   no_reply_prefix: "⚠️ Yanıt yok: "
   empty_response: "{model} bu kez, yeniden denemelere rağmen bir yanıt üretmedi. Tekrar denemek için `continue` gönderin veya /model ile model değiştirin."

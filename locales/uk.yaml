@@ -3435,7 +3435,7 @@ display:
     summary_callback: "💾 Перевірка самовдосконалення: {summary}"
     aux_failure_label: "фонова перевірка"
   notice:
-    uncompressed_context_overflow: "⚠️ Контекст сеансу (~{tokens} токенів) перевищує контекстне вікно моделі (~{context_length} токенів), а стиснення недоступне; запит може завершитися помилкою."
+    uncompressed_context_overflow: "⚠️ Контекст сеансу (~{tokens} токенів) перевищує контекстне вікно моделі (~{context_length} токенів), а стискання вимкнено (compression.enabled: false). Скористайтеся /compact, щоб стиснути історію, або увімкніть стискання в config.yaml."
 explainer:
   no_reply_prefix: "⚠️ Немає відповіді: "
   empty_response: "{model} цього разу не дала відповіді навіть після повторних спроб. Надішліть `continue`, щоб спробувати ще раз, або змініть модель через /model."

@@ -3435,7 +3435,7 @@ display:
     summary_callback: "💾 مراجعة التحسين الذاتي: {summary}"
     aux_failure_label: "المراجعة في الخلفية"
   notice:
-    uncompressed_context_overflow: "⚠️ سياق الجلسة (~{tokens} رمزًا) يتجاوز نافذة سياق النموذج (~{context_length} رمزًا) والضغط غير متاح؛ قد يفشل الطلب."
+    uncompressed_context_overflow: "⚠️ سياق الجلسة (~{tokens} رمزًا) يتجاوز نافذة سياق النموذج (~{context_length} رمزًا) مع تعطيل الضغط (compression.enabled: false). استخدم /compact لضغط السجل أو فعّل الضغط في config.yaml."
 explainer:
   no_reply_prefix: "⚠️ لا رد: "
   empty_response: "لم ينتج {model} ردًا هذه المرة، حتى بعد إعادة المحاولات. أرسل `continue` للمحاولة مجددًا، أو بدّل النموذج عبر /model."
