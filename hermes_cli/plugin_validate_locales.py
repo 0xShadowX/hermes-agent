@@ -38,7 +38,7 @@ def reference_keys(surface: str) -> Optional[Set[str]]:
         export = locales / _KEY_EXPORTS[surface]
         if not export.is_file():
             return None
-        data = json.loads(export.read_text(encoding="utf-8"))
+        data = json.loads(export.read_text(encoding="utf-8-sig"))
         keys = data.get("keys") if isinstance(data, dict) else data
         return {str(k) for k in keys} if isinstance(keys, list) else None
     except Exception as exc:  # a broken reference is a Hermes bug, not the pack's
