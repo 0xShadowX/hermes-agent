@@ -5008,6 +5008,7 @@ export const frOverrides = {
       editModels: 'Modifier les modèles…',
       followDefault: 'Utiliser le modèle par défaut des Réglages',
       refreshModels: 'Actualiser les modèles',
+      favorites: 'Favoris',
       fast: 'Rapide'
     },
     modelOptions: {
@@ -5015,6 +5016,8 @@ export const frOverrides = {
       options: 'Options',
       thinking: 'Réflexion',
       fast: 'Rapide',
+      addFavorite: 'Ajouter aux favoris',
+      removeFavorite: 'Retirer des favoris',
       effort: 'Effort',
       minimal: 'Minimal',
       low: 'Faible',

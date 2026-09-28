@@ -4996,6 +4996,7 @@ export const deOverrides = {
       editModels: 'Modelle bearbeiten…',
       followDefault: 'Standard aus den Einstellungen verwenden',
       refreshModels: 'Modelle aktualisieren',
+      favorites: 'Favoriten',
       fast: 'Schnell'
     },
     modelOptions: {
@@ -5003,6 +5004,8 @@ export const deOverrides = {
       options: 'Optionen',
       thinking: 'Denken',
       fast: 'Schnell',
+      addFavorite: 'Zu Favoriten hinzufügen',
+      removeFavorite: 'Aus Favoriten entfernen',
       effort: 'Aufwand',
       minimal: 'Minimal',
       low: 'Niedrig',

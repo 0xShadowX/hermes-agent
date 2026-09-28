@@ -3853,16 +3853,16 @@ export interface Translations {
       editModels: string
       followDefault: string
       refreshModels: string
+      favorites: string
       fast: string
-      pinnedSection: string
     }
     modelOptions: {
       noOptions: string
       options: string
       thinking: string
       fast: string
-      pinModel: string
-      unpinModel: string
+      addFavorite: string
+      removeFavorite: string
       effort: string
       minimal: string
       low: string

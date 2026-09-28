@@ -3568,6 +3568,7 @@ export const ru = defineLocale({
       editModels: 'Изменить модели…',
       followDefault: 'Использовать модель по умолчанию из настроек',
       refreshModels: 'Обновить модели',
+      favorites: 'Избранное',
       fast: 'Быстрая'
     },
     modelOptions: {
@@ -3575,6 +3576,8 @@ export const ru = defineLocale({
       options: 'Опции',
       thinking: 'Размышление',
       fast: 'Быстрая',
+      addFavorite: 'Добавить в избранное',
+      removeFavorite: 'Убрать из избранного',
       effort: 'Усилия',
       minimal: 'Минимально',
       low: 'Низкое',

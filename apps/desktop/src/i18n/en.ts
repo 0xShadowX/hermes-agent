@@ -4600,6 +4600,7 @@ export const en: Translations = {
       editModels: 'Edit models…',
       followDefault: 'Use Settings default',
       refreshModels: 'Refresh models',
+      favorites: 'Favorites',
       fast: 'Fast'
     },
     modelOptions: {
@@ -4607,6 +4608,8 @@ export const en: Translations = {
       options: 'Options',
       thinking: 'Thinking',
       fast: 'Fast',
+      addFavorite: 'Add to favorites',
+      removeFavorite: 'Remove from favorites',
       effort: 'Effort',
       minimal: 'Minimal',
       low: 'Low',

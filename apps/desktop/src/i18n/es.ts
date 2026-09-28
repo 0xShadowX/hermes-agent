@@ -4986,6 +4986,7 @@ export const esOverrides = {
       editModels: 'Editar modelos…',
       followDefault: 'Usar el predeterminado de Ajustes',
       refreshModels: 'Actualizar modelos',
+      favorites: 'Favoritos',
       fast: 'Rápido'
     },
     modelOptions: {
@@ -4993,6 +4994,8 @@ export const esOverrides = {
       options: 'Opciones',
       thinking: 'Razonamiento',
       fast: 'Rápido',
+      addFavorite: 'Añadir a favoritos',
+      removeFavorite: 'Quitar de favoritos',
       effort: 'Esfuerzo',
       minimal: 'Mínimo',
       low: 'Bajo',
