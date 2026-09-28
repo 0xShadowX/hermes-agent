@@ -1447,6 +1447,12 @@ platform:
     standalone_quit: "entregado"
   homeassistant:
     notification_title: "Hermes Agent"
+  relay:
+    confirm_approve_once: "Aprobar una vez"
+    confirm_always_approve: "Aprobar siempre"
+    confirm_cancel: "Cancelar"
+    prompt_other: "✏️ Otra (escribir respuesta)"
+    prompt_expired: ⌛ Esa solicitud ya no espera respuesta. Envía tu respuesta como un mensaje normal.
 slash:
   approve:
     description: "Aprobar un comando peligroso pendiente"

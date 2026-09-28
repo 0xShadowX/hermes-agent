@@ -1447,6 +1447,12 @@ platform:
     standalone_quit: "تم التسليم"
   homeassistant:
     notification_title: "Hermes Agent"
+  relay:
+    confirm_approve_once: "الموافقة مرة"
+    confirm_always_approve: "الموافقة دائمًا"
+    confirm_cancel: "إلغاء"
+    prompt_other: "✏️ غير ذلك (اكتب الإجابة)"
+    prompt_expired: ⌛ لم يعد هذا الطلب ينتظر إجابة. أرسل ردك كرسالة عادية.
 slash:
   approve:
     description: "الموافقة على أمر خطير قيد الانتظار"

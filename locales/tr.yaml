@@ -1447,6 +1447,12 @@ platform:
     standalone_quit: "teslim edildi"
   homeassistant:
     notification_title: "Hermes Agent"
+  relay:
+    confirm_approve_once: "Bir Kez Onayla"
+    confirm_always_approve: "Her Zaman Onayla"
+    confirm_cancel: "İptal"
+    prompt_other: "✏️ Diğer (yanıt yazın)"
+    prompt_expired: ⌛ Bu istem artık yanıt beklemiyor. Yanıtınızı normal bir mesaj olarak gönderin.
 slash:
   approve:
     description: "Bekleyen tehlikeli bir komutu onayla"

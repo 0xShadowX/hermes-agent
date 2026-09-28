@@ -1,6 +1,3 @@
-# Hermes statikus üzenetkatalógus -- Magyar
-# See locales/en.yaml for the source of truth; keep keys in sync.
-
 approval:
   dangerous_header: "⚠️  VESZÉLYES PARANCS: {description}"
   choose_long: "      [o]egyszer  |  [s]munkamenet  |  [a]mindig  |  [d]elutasít"
@@ -1467,6 +1464,12 @@ platform:
     standalone_quit: "kézbesítve"
   homeassistant:
     notification_title: "Hermes Agent"
+  relay:
+    confirm_approve_once: "Jóváhagyás egyszer"
+    confirm_always_approve: "Mindig jóváhagy"
+    confirm_cancel: "Mégse"
+    prompt_other: "✏️ Egyéb (írd be a választ)"
+    prompt_expired: ⌛ Ez a kérdés már nem vár válaszra. Küldd el a válaszodat normál üzenetként.
 slash:
   approve:
     description: "Függőben lévő veszélyes parancs jóváhagyása"

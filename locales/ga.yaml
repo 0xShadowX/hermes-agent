@@ -1447,6 +1447,12 @@ platform:
     standalone_quit: "seachadta"
   homeassistant:
     notification_title: "Hermes Agent"
+  relay:
+    confirm_approve_once: "Ceadaigh uair amháin"
+    confirm_always_approve: "Ceadaigh i gcónaí"
+    confirm_cancel: "Cealaigh"
+    prompt_other: "✏️ Eile (clóscríobh freagra)"
+    prompt_expired: ⌛ Níl an leid sin ag fanacht le freagra a thuilleadh. Seol do fhreagra mar ghnáth-theachtaireacht.
 slash:
   approve:
     description: "Ceadaigh ordú contúirteach atá ag fanacht"

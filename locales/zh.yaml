@@ -1447,6 +1447,12 @@ platform:
     standalone_quit: "已送达"
   homeassistant:
     notification_title: "Hermes Agent"
+  relay:
+    confirm_approve_once: "批准一次"
+    confirm_always_approve: "始终批准"
+    confirm_cancel: "取消"
+    prompt_other: "✏️ 其他（输入回答）"
+    prompt_expired: ⌛ 该提示已不再等待回答。请以普通消息发送您的回复。
 slash:
   approve:
     description: "批准待处理的危险命令"

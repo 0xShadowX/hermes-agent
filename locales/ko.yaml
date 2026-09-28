@@ -1447,6 +1447,12 @@ platform:
     standalone_quit: "전송됨"
   homeassistant:
     notification_title: "Hermes Agent"
+  relay:
+    confirm_approve_once: "한 번 승인"
+    confirm_always_approve: "항상 승인"
+    confirm_cancel: "취소"
+    prompt_other: "✏️ 기타 (직접 입력)"
+    prompt_expired: ⌛ 이 프롬프트는 더 이상 답변을 기다리지 않아요. 일반 메시지로 답변을 보내 주세요.
 slash:
   approve:
     description: "대기 중인 위험 명령 승인"

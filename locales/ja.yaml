@@ -1447,6 +1447,12 @@ platform:
     standalone_quit: "配信済み"
   homeassistant:
     notification_title: "Hermes Agent"
+  relay:
+    confirm_approve_once: "一度だけ承認"
+    confirm_always_approve: "常に承認"
+    confirm_cancel: "キャンセル"
+    prompt_other: "✏️ その他（回答を入力）"
+    prompt_expired: ⌛ このプロンプトはもう回答を待っていません。通常のメッセージとして返信を送ってください。
 slash:
   approve:
     description: "保留中の危険なコマンドを承認"

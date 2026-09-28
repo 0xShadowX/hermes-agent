@@ -1447,6 +1447,12 @@ platform:
     standalone_quit: "доставлено"
   homeassistant:
     notification_title: "Hermes Agent"
+  relay:
+    confirm_approve_once: "Одобрить один раз"
+    confirm_always_approve: "Одобрять всегда"
+    confirm_cancel: "Отмена"
+    prompt_other: "✏️ Другое (ввести ответ)"
+    prompt_expired: ⌛ Этот запрос больше не ожидает ответа. Отправьте ответ обычным сообщением.
 slash:
   approve:
     description: "Одобрить ожидающую опасную команду"
