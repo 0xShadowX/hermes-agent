@@ -1146,8 +1146,16 @@ export interface DisplayStatus {
   blocker?: string | null
   memory_available_mb?: number | null
   memory_limit_mb?: number | null
+  placement?: string
+  image_switch?: DisplayImageSwitch | null
   lease: DisplayLease
   profile_key: string
+}
+/** A persisted Docker sandbox kept on the previous default image; the user decides the switch. */
+export interface DisplayImageSwitch {
+  current_image: string
+  target_image: string
+  containers: number
 }
 /** ``tools/bot_desktop/lease.py::Lease`` as clients may see it: the holder's viewer id is a capability and never leaves the gateway; ``viewer_hash`` lets the holder recognise itself. */
 export interface DisplayLease {
@@ -1183,6 +1191,8 @@ export interface DisplayStopResult {
   blocker?: string | null
   memory_available_mb?: number | null
   memory_limit_mb?: number | null
+  placement?: string
+  image_switch?: DisplayImageSwitch | null
   lease: DisplayLease
   profile_key: string
   stopped: boolean
@@ -1206,11 +1216,38 @@ export interface DisplayObserveResult {
   blocker?: string | null
   memory_available_mb?: number | null
   memory_limit_mb?: number | null
+  placement?: string
+  image_switch?: DisplayImageSwitch | null
   lease: DisplayLease
   profile_key: string
   ticket: string
   path: string
   viewer_id: string
+}
+export interface DisplaySwitchSandboxImageParams {
+  profile?: string | null
+  approve?: boolean
+}
+export interface DisplaySwitchSandboxImageResult {
+  profile: string
+  supported: boolean
+  installed: boolean
+  missing: string[]
+  running: boolean
+  pid?: number | null
+  display?: string | null
+  socket?: string | null
+  geometry: string
+  install_command?: string | null
+  browser?: string | null
+  blocker?: string | null
+  memory_available_mb?: number | null
+  memory_limit_mb?: number | null
+  placement?: string
+  image_switch?: DisplayImageSwitch | null
+  lease: DisplayLease
+  profile_key: string
+  docker_image: string
 }
 export interface DisplayInstallResult {
   started: boolean
@@ -1713,10 +1750,11 @@ export interface CompletionItem {
   meta?: string
   kind?: string | null
 }
-/** ``session_id`` binds skill completions to that session's profile and workspace (project skills). */
+/** ``session_id`` binds skill completions to that session's profile and workspace (project skills); ``profile`` scopes a session-less request (a new-chat draft). */
 export interface CompleteSlashParams {
   text?: string | null
   session_id?: string | null
+  profile?: string | null
 }
 /** ``replace_from`` is the column the accepted item replaces from. */
 export interface CompleteSlashResult {
@@ -3815,9 +3853,10 @@ export interface SkillInspectInfo {
   skill_md_preview?: string | null
   [key: string]: unknown
 }
-/** ``session_id`` binds the rescan to that session's profile and workspace (project skills). */
+/** ``session_id`` binds the rescan to that session's profile and workspace (project skills); ``profile`` scopes a session-less rescan. */
 export interface SkillsReloadParams {
   session_id?: string | null
+  profile?: string | null
 }
 export interface SkillsReloadResult {
   output: string
@@ -4330,6 +4369,8 @@ export interface DisplayStatusPayload {
   blocker?: string | null
   memory_available_mb?: number | null
   memory_limit_mb?: number | null
+  placement?: string
+  image_switch?: DisplayImageSwitch | null
   lease: DisplayLease
   profile_key: string
 }
@@ -4822,6 +4863,8 @@ export interface RpcMethods {
   'display.status': { params: ProfileParams; result: DisplayStatus }
   /** Stop the screen. Refused (5300, code viewer_mismatch) while a human holds unless force. */
   'display.stop': { params: DisplayStopParams; result: DisplayStopResult }
+  /** Decide the pending default sandbox image switch for this profile; refused when none is pending. */
+  'display.switchSandboxImage': { params: DisplaySwitchSandboxImageParams; result: DisplaySwitchSandboxImageResult }
   /** One JPEG grab of the bot's screen; read-only, never changes the lease. */
   'display.thumbnail': { params: ProfileParams; result: DisplayThumbnailResult }
   /** Stage a non-image file into the session workspace and hand back its @file: ref. */
@@ -5253,6 +5296,7 @@ export const RPC_METHODS = [
   'display.start',
   'display.status',
   'display.stop',
+  'display.switchSandboxImage',
   'display.thumbnail',
   'file.attach',
   'free_tier.ack_notice',
