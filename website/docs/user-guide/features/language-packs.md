@@ -147,4 +147,6 @@ on the next start or the next `display.language` change.
 - **A translated string still shows in English** — the key is not in the English catalog (run
   `hermes plugins validate`; unknown keys are listed), or the placeholder set differs from English.
 - **Language listed but the TUI/Desktop is still English** — the pack has no `.tui.yaml` /
-  `.desktop.yaml`; those surfaces render English plus whatever the pack provides.
+  `.desktop.yaml`; those surfaces render English plus whatever the pack provides. For the 16 bundled
+  languages the TUI ships its own `locales/<lang>.tui.yaml` in the Hermes tree (the Desktop bundles
+  its translations in-app), so a pack for one of those only needs the keys it wants to override.
