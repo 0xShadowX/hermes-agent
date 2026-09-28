@@ -2999,6 +2999,8 @@ export const ru = defineLocale({
     restoredDraftNotice: 'Восстановлено ваше неотправленное сообщение',
     restoredDraftUndo: 'Отменить',
     queueEdit: 'Изменить',
+    queueExpand: 'Раскрыть',
+    queueCollapse: 'Свернуть',
     queueSendNext: 'Дальше',
     queueSteer: 'Направить — изменить текущий ход сейчас',
     queueSend: 'Отправить',
