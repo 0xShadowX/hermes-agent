@@ -2,9 +2,13 @@ import { atom, computed, type ReadableAtom, type WritableAtom } from 'nanostores
 
 import { SIDEBAR_COLLAPSE_MEDIA_QUERY } from '@/app/layout-constants'
 import { PANE_TOGGLE_REVEAL_EVENT } from '@/components/pane-shell'
+import type { GroupNode } from '@/components/pane-shell/tree/model'
 import {
   restoreHiddenTreeSideTabs,
   restoreMinimizedTreeSide,
+  revealTreePane,
+  rootRow,
+  setTreeGroupMinimized,
   setTreeSideCollapsed,
   type TreeSide
 } from '@/components/pane-shell/tree/store'
@@ -593,6 +597,79 @@ export function setFileBrowserOpen(open: boolean) {
   }
 
   revealNarrowPane(FILE_BROWSER_PANE_ID, open ? 'open' : 'close')
+}
+
+// POSITIONAL right-side toggle. The titlebar button and ⌘J promise
+// "everything on your physical right" — but preview tiles (the Browser) dock
+// beside main with placement 'main', so the SEMANTIC side derivation never
+// classifies their column as a side column, and the pane-bound toggle (files)
+// presses a pane that may have been dragged into the left stack. Resolve the
+// target from the TREE instead: the rightmost foldable root-row column,
+// whatever panes live there — then fold/unfold it through the tree's own zone
+// minimize, which keeps its tab on a persistent rail so the toggle round-trips
+// exactly like the zone chevron.
+export function toggleRightSide() {
+  if (revealNarrowPane(FILE_BROWSER_PANE_ID, 'toggle')) {
+    return
+  }
+
+  const group = rightSideGroup()
+
+  if (!group) {
+    // No foldable column on the right (e.g. terminal-on-bottom): fall back to
+    // the semantic branch so ⌘J is never a dead key.
+    toggleFileBrowserOpen()
+
+    return
+  }
+
+  if (group.minimized) {
+    revealTreePane(group.active ?? group.panes[0])
+
+    return
+  }
+
+  setTreeGroupMinimized(group.id, true)
+}
+
+// The physically-rightmost foldable column of the root row — the POSITIONAL
+// right side, derived from the live tree. Unlike the semantic `paneRootSide`
+// (which sees only placement-tagged side panes), this ALSO catches a
+// preview-tile column (the Browser): its panes register `placement: 'main'`,
+// so the semantic walk classifies their zone as main and skips it. A column
+// qualifies when it is a leaf group that holds no main surface (the workspace
+// / session / route tiles). Null when nothing foldable lives there.
+function rightSideGroup(): GroupNode | null {
+  const row = rootRow()
+
+  if (!row) {
+    return null
+  }
+
+  for (let i = row.children.length - 1; i >= 0; i--) {
+    const child = row.children[i]
+
+    // Only a leaf group folds; a nested split would strand inner zones.
+    if (child.type !== 'group') {
+      continue
+    }
+
+    // The main column itself (workspace / session tiles) is never a side.
+    if (child.panes.some(isMainSurface)) {
+      continue
+    }
+
+    return child
+  }
+
+  return null
+}
+
+// Is `paneId` a main surface (the workspace or a session/route tile)? Those
+// mark THE main column; preview tiles share `placement: 'main'` with them but
+// are docked side surfaces, which is exactly why the positional walk exists.
+function isMainSurface(paneId: string): boolean {
+  return paneId === 'workspace' || paneId.startsWith('session-tile:') || paneId.startsWith('route-tile:')
 }
 
 // "Reveal this file in the file-browser tree" — an absolute path the tree

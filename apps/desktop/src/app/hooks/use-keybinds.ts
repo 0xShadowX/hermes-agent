@@ -44,8 +44,8 @@ import {
   cycleSidebarGrouping,
   requestSessionSearchFocus,
   setFileBrowserOpen,
-  toggleFileBrowserOpen,
   togglePanesFlipped,
+  toggleRightSide,
   toggleSidebarOpen
 } from '@/store/layout'
 import { notifyError } from '@/store/notifications'
@@ -337,10 +337,10 @@ export function useKeybinds(deps: KeybindRuntimeDeps): void {
     // Narrow-viewport reveal is handled inside the store toggles now.
     'view.toggleSidebar': toggleSidebarOpen,
     'view.cycleSidebarGrouping': cycleSidebarGrouping,
-    // ⌘J toggles the right sidebar — but a layout with no right side (e.g.
-    // terminal-on-bottom) would leave it a dead key, so it falls back to the
-    // terminal there. The single "secondary panel" toggle.
-    'view.toggleRightSidebar': () => (layoutHasRootSide('right') ? toggleFileBrowserOpen() : toggleTerminalPane()),
+    // ⌘J toggles the physical right side — whatever column lives there in the
+    // live tree (the Browser preview column, the files column). Falls back to
+    // the semantic branch when no right side exists (terminal-on-bottom).
+    'view.toggleRightSidebar': () => (layoutHasRootSide('right') ? toggleRightSide() : toggleTerminalPane()),
     'view.toggleReview': toggleReview,
     'view.toggleStatusbar': toggleStatusbarVisible,
     'view.toggleProfileRail': toggleProfileRailVisible,
