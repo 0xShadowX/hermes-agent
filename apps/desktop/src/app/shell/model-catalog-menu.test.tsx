@@ -18,6 +18,7 @@ import { DropdownMenu, DropdownMenuContent } from '@/components/ui/dropdown-menu
 import { queryClient } from '@/lib/query-client'
 import { $localModelsEnabled } from '@/store/local-models-flag'
 import { localModelsKey, localModelsOwner } from '@/store/local-runtime-jobs'
+import { $favoriteModels, favoriteModelKey, toggleFavoriteModel } from '@/store/model-favorites'
 import {
   $modelVisibilityOpen,
   $visibleModels,
@@ -61,7 +62,9 @@ vi.mock('@/hermes', () => ({
 beforeEach((): void => {
   queryClient.clear()
   queryClient.setDefaultOptions({ queries: { ...queryClient.getDefaultOptions().queries, retry: false } })
+  window.localStorage.clear()
   $visibleModels.set(null)
+  $favoriteModels.set([])
   queryClient.setQueryData(localModelsKey(localModelsOwner(), 'jobs'), [])
   // These suites exercise the local-models rows, which ship behind --local.
   $localModelsEnabled.set(true)
@@ -211,6 +214,84 @@ describe('the catalog owns model curation', () => {
     fireEvent.click(screen.getByText('Edit models…'))
 
     expect($modelVisibilityOpen.get()).toBe(true)
+  })
+})
+
+// Starring is a promise about the LIST: "keep this one where I can always
+// reach it". That promise is what decides where a starred row paints — its own
+// section at the top, and nowhere twice.
+describe('the catalog owns starred models', () => {
+  it('lifts a starred model into the Favorites section above the provider groups', async () => {
+    toggleFavoriteModel('google', 'gemini-2.5-flash')
+
+    renderMenu()
+
+    const rows = (await screen.findAllByText(/Gemini 2\.5/i)).map(node => node.closest('[role="menuitem"]')!)
+
+    // Its own section heading paints above the provider groups…
+    expect(screen.getByText('Favorites')).toBeTruthy()
+
+    // …and the row's DOM order reflects it: the section label comes before
+    // the provider group heading (the LAST 'Google' text — the favorites row's
+    // provider chip paints one first).
+    const favoritesLabel = screen.getByText('Favorites')
+    const googleTexts = screen.getAllByText('Google')
+    const googleHeading = googleTexts[googleTexts.length - 1]
+
+    expect(favoritesLabel.compareDocumentPosition(googleHeading) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+
+    // The provider chip names the row's provider, so two labs sharing a model
+    // id stay apart in the mixed section.
+    expect(rows.some(row => row.textContent?.includes('Google'))).toBe(true)
+  })
+
+  it('does not also list a starred model under its provider', async () => {
+    toggleFavoriteModel('google', 'gemini-2.5-flash')
+
+    renderMenu()
+
+    await screen.findByText('Favorites')
+
+    // Listed once, under Favorites — not also down in Google's group.
+    expect(screen.getAllByText(/Gemini 2\.5/i)).toHaveLength(1)
+  })
+
+  it('keeps a star whose provider is not connected without painting an empty section', async () => {
+    $favoriteModels.set([favoriteModelKey('anthropic', 'claude-sonnet-4.6')])
+
+    renderMenu()
+
+    await screen.findByText(/Gemini 3\.1 Pro/i)
+    expect(screen.queryByText('Favorites')).toBeNull()
+  })
+
+  // Curation and starring are different questions: "which models do I usually
+  // want listed" vs "which one do I want first". A star wins.
+  it('shows a starred model the Edit Models shortlist hides', async () => {
+    setVisibleModels(new Set([modelVisibilityKey('google', 'gemini-3.1-pro')]))
+    toggleFavoriteModel('google', 'gemini-2.5-flash')
+
+    renderMenu()
+
+    await screen.findByText('Favorites')
+    expect(screen.getAllByText(/Gemini 2\.5/i)).toHaveLength(1)
+  })
+
+  it('folds the section away while searching and lists the match in its provider place', async () => {
+    toggleFavoriteModel('google', 'gemini-2.5-flash')
+
+    renderMenu()
+    await screen.findByText('Favorites')
+
+    fireEvent.change(screen.getByRole('textbox', { name: 'Search models' }), { target: { value: 'gemini-2.5' } })
+
+    // A query means "show me every match": the section folds and the match
+    // paints in its provider's place. Still exactly once.
+    await vi.waitFor(() => {
+      expect(screen.queryByText('Favorites')).toBeNull()
+    })
+
+    expect(screen.getAllByText(/Gemini 2\.5/i)).toHaveLength(1)
   })
 })
 

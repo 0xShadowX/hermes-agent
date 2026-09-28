@@ -1,5 +1,6 @@
 import { REASONING_EFFORTS } from '@hermes/shared'
 
+import { Codicon } from '@/components/ui/codicon'
 import {
   DropdownMenuItem,
   DropdownMenuLabel,
@@ -78,6 +79,9 @@ interface ModelEditSubmenuProps {
   fastControl: FastControl
   /** Whether this row's model is the active one. */
   isActive: boolean
+  /** Whether this row's model is starred (lifted to the top of the catalog).
+   *  Only meaningful together with `onToggleFavorite`. */
+  isFavorite?: boolean
   /** This row's model id. */
   model: string
   /** Switch to a specific model id (used to swap base ⇄ -fast variant). */
@@ -87,6 +91,10 @@ interface ModelEditSubmenuProps {
    *  controller decides what an edit means. That's what lets the same submenu
    *  drive a live chat session and a detached per-task override. */
   onSetOptions: (patch: { effort?: string; fast?: boolean }) => void
+  /** Star or unstar this row's model — reported like any other edit, the
+   *  catalog owns where a star is kept. Absent on surfaces that have no
+   *  catalog behind them (the composer's reasoning pill). */
+  onToggleFavorite?: () => void
   /** This row's provider slug. */
   provider: string
   /** Whether this model supports reasoning effort. */
@@ -115,8 +123,10 @@ export function ModelOptionsContent({
   effortWire,
   fastControl,
   isActive,
+  isFavorite,
   onSelectModel,
   onSetOptions,
+  onToggleFavorite,
   reasoning
 }: ModelEditSubmenuProps) {
   const { t } = useI18n()
@@ -149,44 +159,68 @@ export function ModelOptionsContent({
   const hasFast = fastControl.kind !== 'none'
   const fastOn = fastControl.kind === 'none' ? false : fastControl.on
 
-  return !hasFast && !reasoning ? (
-    <div className="px-2.5 py-3 text-xs text-(--ui-text-tertiary)">{copy.noOptions}</div>
-  ) : (
+  return (
     <>
-      <DropdownMenuLabel className={dropdownMenuSectionLabel}>{copy.options}</DropdownMenuLabel>
-      {showThinkingToggle ? (
-        <DropdownMenuItem className={dropdownMenuRow} onSelect={event => event.preventDefault()}>
-          {copy.thinking}
-          <Switch
-            checked={thinkingOn}
-            className="ml-auto"
-            onCheckedChange={checked => onSetOptions({ effort: checked ? effortValue || defaultEffort : 'none' })}
-            size="xs"
-          />
-        </DropdownMenuItem>
-      ) : null}
-      {hasFast ? (
-        <DropdownMenuItem className={dropdownMenuRow} onSelect={event => event.preventDefault()}>
-          {copy.fast}
-          <Switch checked={fastOn} className="ml-auto" onCheckedChange={setFast} size="xs" />
-        </DropdownMenuItem>
-      ) : null}
-      {reasoning ? (
+      {!hasFast && !reasoning ? (
+        <div className="px-2.5 py-3 text-xs text-(--ui-text-tertiary)">{copy.noOptions}</div>
+      ) : (
+        <>
+          <DropdownMenuLabel className={dropdownMenuSectionLabel}>{copy.options}</DropdownMenuLabel>
+          {showThinkingToggle ? (
+            <DropdownMenuItem className={dropdownMenuRow} onSelect={event => event.preventDefault()}>
+              {copy.thinking}
+              <Switch
+                checked={thinkingOn}
+                className="ml-auto"
+                onCheckedChange={checked => onSetOptions({ effort: checked ? effortValue || defaultEffort : 'none' })}
+                size="xs"
+              />
+            </DropdownMenuItem>
+          ) : null}
+          {hasFast ? (
+            <DropdownMenuItem className={dropdownMenuRow} onSelect={event => event.preventDefault()}>
+              {copy.fast}
+              <Switch checked={fastOn} className="ml-auto" onCheckedChange={setFast} size="xs" />
+            </DropdownMenuItem>
+          ) : null}
+          {reasoning ? (
+            <>
+              <DropdownMenuSeparator className="mx-0" />
+              <DropdownMenuLabel className={dropdownMenuSectionLabel}>{copy.effort}</DropdownMenuLabel>
+              <DropdownMenuRadioGroup onValueChange={value => onSetOptions({ effort: value })} value={effortValue}>
+                {REASONING_EFFORTS.map(value => (
+                  <DropdownMenuRadioItem
+                    className={dropdownMenuRow}
+                    key={value}
+                    onSelect={event => event.preventDefault()}
+                    value={value}
+                  >
+                    {clamp?.effort === value ? `${copy[value]} (${copy.sendsOnRoute(copy[clamp.wire])})` : copy[value]}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </>
+          ) : null}
+        </>
+      )}
+      {/* Starring sits OUTSIDE the capability gates above: lifting a model to
+          the top of the picker has nothing to do with what it can be asked
+          for, so a model with no reasoning/fast options still offers it. Only
+          the catalog passes the callback; the reasoning pill has no list to
+          reorder. */}
+      {onToggleFavorite ? (
         <>
           <DropdownMenuSeparator className="mx-0" />
-          <DropdownMenuLabel className={dropdownMenuSectionLabel}>{copy.effort}</DropdownMenuLabel>
-          <DropdownMenuRadioGroup onValueChange={value => onSetOptions({ effort: value })} value={effortValue}>
-            {REASONING_EFFORTS.map(value => (
-              <DropdownMenuRadioItem
-                className={dropdownMenuRow}
-                key={value}
-                onSelect={event => event.preventDefault()}
-                value={value}
-              >
-                {clamp?.effort === value ? `${copy[value]} (${copy.sendsOnRoute(copy[clamp.wire])})` : copy[value]}
-              </DropdownMenuRadioItem>
-            ))}
-          </DropdownMenuRadioGroup>
+          <DropdownMenuItem
+            className={dropdownMenuRow}
+            onSelect={event => {
+              event.preventDefault()
+              onToggleFavorite()
+            }}
+          >
+            <Codicon name={isFavorite ? 'star-full' : 'star-empty'} size="0.75rem" />
+            {isFavorite ? copy.removeFavorite : copy.addFavorite}
+          </DropdownMenuItem>
         </>
       ) : null}
     </>
