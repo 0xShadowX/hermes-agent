@@ -400,12 +400,16 @@ def load_permanent(patterns: set):
 
 
 def _persist_choice(session_key: str, choice: str, keys: list[str]) -> None:
-    """Persist a human ``session``/``always`` choice for each pattern key. ``once`` persists nothing."""
-    for key in keys:
+    """Persist a human ``session``/``always`` choice for each pattern key. ``once`` persists nothing.
+
+    One prompt can name several patterns, and ``always`` is a standing grant for the primary one
+    (``keys[0]``) only; the rest are approved for the session. Otherwise answering ``always`` to
+    ``rm -rf build && git push --force`` would also allowlist every later force push."""
+    for index, key in enumerate(keys):
         if choice not in ("session", "always"):
             continue
         approve_session(session_key, key)
-        if choice == "always":
+        if choice == "always" and index == 0:
             approve_permanent(key)
             # Pass only this process's grants, taken against the baseline of the same snapshot. A
             # check that syncs a hand removal before the save runs advances the baseline, so a

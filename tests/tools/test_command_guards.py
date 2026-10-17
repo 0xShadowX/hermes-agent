@@ -217,3 +217,21 @@ class TestSessionApprovalCoversOnlyItsPattern:
         assert result["approved"] is False
         cb.assert_called_once()
         assert first_key not in cb.call_args[0][1]
+
+    def test_always_is_a_standing_grant_for_the_primary_pattern_only(self, monkeypatch):
+        """One ``always`` on a prompt naming two patterns allowlists the first; the second is
+        approved for this session, so a later command tripping only it prompts again elsewhere."""
+        os.environ["HERMES_INTERACTIVE"] = "1"
+        session_key = os.getenv("HERMES_SESSION_KEY", "default")
+        saved = []
+        monkeypatch.setattr(approval_module, "save_permanent_allowlist", lambda grants: saved.append(set(grants)))
+        command = "rm -rf build && git push --force origin main"
+        (first_key, _), (second_key, _) = approval_module._dangerous_matches(command)[:2]
+        cb = MagicMock(return_value="always")
+
+        assert check_all_command_guards(command, "local", approval_callback=cb)["approved"] is True
+
+        assert approval_module._is_permanently_approved(first_key)
+        assert not approval_module._is_permanently_approved(second_key)
+        assert approval_module.is_approved(session_key, second_key)
+        assert all(second_key not in grants for grants in saved)
