@@ -60,9 +60,13 @@ _SENSITIVE_WRITE_TARGET = (
 _USER_SENSITIVE_WRITE_TARGET = rf'(?:{_SSH_SENSITIVE_PATH}|{_SHELL_RC_FILES}|{_CREDENTIAL_FILES})'
 _PROJECT_SENSITIVE_WRITE_TARGET = rf'(?:{_PROJECT_ENV_PATH}|{_PROJECT_CONFIG_PATH})'
 # cp/mv/install: the sensitive path is a write target only as the LAST argument (destination), so
-# `cp config.yaml backup.yaml` (config.yaml as SOURCE) stays out. Trailing redirections (`2>/dev/null`,
-# `2>&1`) and a closing `)`/backtick may follow the destination.
-_COMMAND_TAIL = r'[)`]*(?:\s+(?:\d*|&)(?:>>?|<)&?\s*\S+)*(?:\s*(?:&&|\|\||;).*)?\s*$'
+# `cp config.yaml backup.yaml` (config.yaml as SOURCE) stays out. Options may follow the destination
+# (GNU coreutils permutes them, so `cp a /etc/hosts -v` still copies; a separate option value only when
+# numeric, `install a /etc/x -m 644`), as may redirections (`2>/dev/null`, `2>&1`) and a closing
+# `)`/backtick, spaced or not. Each branch takes its whitespace possessively so a long run of spaces fails
+# in linear time.
+_COMMAND_TAIL = (r'(?:\s++-{1,2}[\w-]++(?:=\S++|\s++\d++(?![^\s)`]))?|\s++(?:\d*|&)(?:>>?|<)&?\s*\S+|\s*+[)`])*'
+                 r'(?:\s*(?:&&|\|\||;).*)?\s*$')
 # `>`/`>>`/tee: the path is ALWAYS a write target regardless of what follows, so only require a
 # shell word boundary (_COMMAND_TAIL let `echo x > .env extra` / `echo x > .env # note` slip past).
 # `#` is deliberately NOT a boundary: a glued `#` is part of the filename (`.env#backup`).

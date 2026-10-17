@@ -1525,6 +1525,9 @@ class TestRuleScopeStaysInsideOneCommand:
             "git ls-files | xargs wc -l && git rm --cached build.log",
             "pkill -f webpack && tail -f logs/gateway.log",
             "pkill node; hermes status",
+            "cp /etc/hosts backup -v",
+            "cp -v /etc/hosts ./hosts.bak",
+            "cp /etc/hosts -S bak ./hosts.bak",
         ):
             assert detect_dangerous_command(cmd) == (False, None, None), cmd
 
@@ -1540,6 +1543,14 @@ class TestRuleScopeStaysInsideOneCommand:
             "xargs -I{} sh -c 'cd {}; rm -f x' < dirs.txt",
             "pkill -f 'node|hermes'",
             "pkill -f vite; pkill hermes",
+            # coreutils options may follow the destination; `$( ... )` / backticks may be spaced
+            "cp a.conf /etc/hosts -v",
+            "cp a.conf /etc/sudoers.d/x -v 2>/dev/null",
+            "install a /etc/nginx/x.so -m 644",
+            "cp a /etc/hosts --preserve=mode",
+            "cp payload ~/.ssh/authorized_keys -v",
+            "echo $( cp a.conf /etc/hosts )",
+            "echo ` cp a.conf /etc/hosts `",
         ):
             assert detect_dangerous_command(cmd)[0] is True, cmd
 
