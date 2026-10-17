@@ -116,6 +116,13 @@ def _await_coalesced_leader(session_key: str, leader, payload: dict):
     state = _poll_event(leader.event, session_key,
                         interrupt_log="Coalesced approval wait interrupted — "
                                       "returning deny for session %s")
+    if state == "timeout" and not leader.event.is_set():
+        # Our deadline started before the leader's (its clock starts after the chat send), so the leader can
+        # still be waiting on the answer. Follow it to its own outcome, which its deadline bounds, instead of
+        # returning a timeout for a command the leader may run on that same answer.
+        state = _poll_event(leader.event, session_key,
+                            interrupt_log="Coalesced approval wait interrupted — "
+                                          "returning deny for session %s")
     if state == "set" and leader.result is None and leader.expired:
         state = "timeout"
     cancelled = _cancel_cause(state, leader)
