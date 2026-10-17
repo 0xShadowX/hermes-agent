@@ -78,15 +78,16 @@ def _scan_content(path: str, content: str) -> list[tuple[str, str]]:
     return [(e["ruleName"], e["reminder"]) for e in _COMPILED if _rule_matches(e, path, content)]
 
 
-def _scan_v4a_patch(patch: str) -> list[tuple[str, str]]:
+def _scan_v4a_patch(patch: str, path: str = "") -> list[tuple[str, str]]:
     """A V4A patch carries no top-level ``path``: scan each file's ADDED lines against that file's own
     path, so path-gated rules (Python-only, not-docs, workflow files) see the real file type and a line
-    the patch removes is not reported. Unparseable text is scanned whole, as before."""
+    the patch removes is not reported. Text the parser rejects or finds no file operation in is scanned
+    whole against the call's top-level ``path``, as before."""
     from tools.patch_parser import parse_v4a_patch
 
     operations, error = parse_v4a_patch(patch)
-    if error:
-        return _scan_content("", patch)
+    if error or not operations:
+        return _scan_content(path, patch)
     findings: dict[str, str] = {}
     for op in operations:
         added = "\n".join(line.content for hunk in op.hunks for line in hunk.lines if line.prefix == "+")
@@ -104,7 +105,7 @@ def _scan_args(tool_name: str, args: Any) -> list[tuple[str, str]]:
     path = raw_path if isinstance(raw_path := args.get(path_key), str) else ""
     findings = [finding for val in (args.get(ck) for ck in content_keys) if isinstance(val, str) and val for finding in _scan_content(path, val)]
     if tool_name == "patch" and isinstance(v4a := args.get("patch"), str) and v4a:
-        findings += _scan_v4a_patch(v4a)
+        findings += _scan_v4a_patch(v4a, path)
     return findings
 
 

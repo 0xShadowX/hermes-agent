@@ -217,6 +217,22 @@ class TestTransformToolResultHook:
             tool_name="patch", args={"mode": "patch", "patch": patch}, result='{"success": true}'
         ) is None
 
+    def test_v4a_patch_with_no_file_operation_is_scanned_whole(self):
+        """Text the V4A parser finds no file operation in (no ``*** ... File:`` header, a bare
+        diff, prose) is still scanned as a whole instead of not at all."""
+        mod = _load_plugin_init()
+        for patch in (
+            "*** Begin Patch\n@@\n-    pass\n+    os.system(cmd)\n*** End Patch",
+            "--- a/run.py\n+++ b/run.py\n@@\n+    os.system(cmd)\n",
+            "call os.system(cmd) here",
+        ):
+            result = mod._on_transform_tool_result(
+                tool_name="patch", args={"mode": "patch", "path": "tools/run.py", "patch": patch},
+                result='{"success": true}',
+            )
+            assert isinstance(result, str), patch
+            assert "os_system_injection" in result
+
     def test_untargeted_tool_skipped(self):
         mod = _load_plugin_init()
         # The plugin only scans write_file/patch/skill_manage. terminal output
